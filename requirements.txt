@@ -4,4 +4,6 @@ seaborn
 neattext
 plotly
 scikit-learn
-joblib
+joblib~=1.4.2
+streamlit~=1.40.1
+pytz~=2024.2
