@@ -1,6 +1,5 @@
-import streamlit
+import streamlit as st
 import lib.model_operation as modelOperation
-import lib.database_operation as dbOps
 import numpy as np
 import altair as alt
 import pandas as pd
@@ -19,34 +18,32 @@ emoji = {
 }
 
 def main():
-    streamlit.title("Emotion Classifier App")
-    streamlit.subheader("Emotion Detection in Text")
+    st.title("Emotion Classifier App")
+    st.subheader("Emotion Detection in Text")
 
-    dbOps.createEmotionclfTable()
-
-    with streamlit.form(key="text_form"):
-        rawText = streamlit.text_area("Type Here:"),
-        submit_button = streamlit.form_submit_button(label='Submit')
+    with st.form(key="text_form"):
+        rawText = st.text_area("Type Here:")
+        submit_button = st.form_submit_button(label='Submit')
     
     if submit_button:
-        column = streamlit.columns(spec=1)
-
         prediction = modelOperation.nowEmotion(rawText)
         probability = modelOperation.futureEmotion(rawText)
 
-        with column[0]:
-            streamlit.success("Original Text")
-            streamlit.write(rawText)
+        st.success("Original Text")
+        st.write(rawText)
 
-            streamlit.success("Prediction")
-            emoji_icon = emoji[prediction]
-            streamlit.write("{}:{}".format(prediction, emoji_icon))
-            streamlit.write("Confidence:{}".format(np.max(probability)))
+        st.success("Prediction")
+        emoji_icon = emoji[prediction]
+        st.write(f"{prediction}: {emoji_icon}")
+        st.write(f"Confidence: {np.max(probability):.2f}")
 
-            streamlit.success("Prediction Probability")
-            proba_df = pd.DataFrame(probability, columns=modelOperation.model.classes_)
-            proba_df_clean = proba_df.T.reset_index()
-            proba_df_clean.columns = ["emotions", "probability"]
-            
-            fig = alt.Chart(proba_df_clean).mark_bar().encode(x='emotions', y='probability', color='emotions')
-            streamlit.altair_chart(fig, use_container_width=True)
+        st.success("Prediction Probability")
+        proba_df = pd.DataFrame([probability], columns=modelOperation.model.classes_)
+        proba_df_clean = proba_df.T.reset_index()
+        proba_df_clean.columns = ["emotions", "probability"]
+
+        fig = alt.Chart(proba_df_clean).mark_bar().encode(x='emotions', y='probability', color='emotions')
+        st.altair_chart(fig, use_container_width=True)
+
+if __name__ == "__main__":
+    main()

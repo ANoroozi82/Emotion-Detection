@@ -1,11 +1,14 @@
-import joblib as jl
+import joblib
 
-model = jl.load(open("./models/emotion_classifier_pipe_lr.pkl","rb"))
+model = joblib.load("models/model.joblib")
+vectorizer = joblib.load("models/model_vectorizer.joblib")
 
-def nowEmotion(docx):
-    results = model.predict(docx)
-    return results[0]
+def nowEmotion(text):
+    features = vectorizer.transform([text])
+    prediction = model.predict(features)[0]
+    return prediction
 
-def futureEmotion(docx):
-    results = model.predict_proba(docx)
-    return results
+def futureEmotion(text):
+    features = vectorizer.transform([text])
+    probabilities = model.predict_proba(features)[0]
+    return probabilities
