@@ -1,5 +1,5 @@
 import streamlit as st
-import lib.model_operation as modelOperation
+import lib.model_operation as model_operation
 import numpy as np
 import altair as alt
 import pandas as pd
@@ -22,15 +22,15 @@ def main():
     st.subheader("Emotion Detection in Text")
 
     with st.form(key="text_form"):
-        rawText = st.text_area("Type Here:")
+        raw_text = st.text_area("Type Here:")
         submit_button = st.form_submit_button(label='Submit')
     
     if submit_button:
-        prediction = modelOperation.nowEmotion(rawText)
-        probability = modelOperation.futureEmotion(rawText)
+        prediction = model_operation.now_emotion(raw_text)
+        probability = model_operation.future_emotion(raw_text)
 
         st.success("Original Text")
-        st.write(rawText)
+        st.write(raw_text)
 
         st.success("Prediction")
         emoji_icon = emoji[prediction]
@@ -38,7 +38,7 @@ def main():
         st.write(f"Confidence: {np.max(probability):.2f}")
 
         st.success("Prediction Probability")
-        proba_df = pd.DataFrame([probability], columns=modelOperation.model.classes_)
+        proba_df = pd.DataFrame([probability], columns=model_operation.model.classes_)
         proba_df_clean = proba_df.T.reset_index()
         proba_df_clean.columns = ["emotions", "probability"]
 
